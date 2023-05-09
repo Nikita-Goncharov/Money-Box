@@ -2,10 +2,6 @@
 #include <string>
 #include <ctime>
 
-/*
-Добавление копилки к копилке и монеты к копилке не работает, где-то есть косяк, удаляется head, не смог его найти.
-*/
-
 using namespace std;
 
 struct CustomHashTableElement
@@ -17,7 +13,7 @@ struct CustomHashTableElement
 
 class CustomHashTable
 {
-    int maxCountOfNominals = 10;
+    int maxCountOfNominals;
 
     void _createBaseTable()
     {
@@ -45,7 +41,6 @@ class CustomHashTable
     void _deleteTable()
     {
         CustomHashTableElement *currentElement;
-        cout << "DELETING..." << endl;
         while (head)
         {
             currentElement = head;
@@ -55,10 +50,12 @@ class CustomHashTable
     }
 
 public:
-    CustomHashTableElement *head = 0;
+    CustomHashTableElement *head;
 
     CustomHashTable()
     {
+        maxCountOfNominals = 10;
+        head = 0;
         _createBaseTable();
     }
 
@@ -102,7 +99,6 @@ public:
     {
         string returnStatistic = "Count coins: \n";
         CustomHashTableElement *currentElement = head;
-//        cout << "WE ARE HERE " << head << endl;
         while (currentElement != 0)
         {
             returnStatistic += "Nominal of coin: " + to_string(currentElement->nominalCoinKey) + ", Count of coins: " + to_string(currentElement->countOfCoinsValue) + "\n";
@@ -125,23 +121,21 @@ public:
         }
     }
 
-    CustomHashTable operator+(const CustomHashTable &hashTable)
+    CustomHashTable& operator+(const CustomHashTable &hashTable)
     {
-        CustomHashTable hashTableResult;
-
         CustomHashTableElement *currentElementOfOuterTable = hashTable.head;
         CustomHashTableElement *currentElementOfCurrentTable = head;
 
         while (currentElementOfCurrentTable && currentElementOfOuterTable)
         {
             int globalCount = currentElementOfOuterTable->countOfCoinsValue + currentElementOfCurrentTable->countOfCoinsValue;
-            hashTableResult.rewritePair(currentElementOfOuterTable->nominalCoinKey, globalCount);
+            this->rewritePair(currentElementOfOuterTable->nominalCoinKey, globalCount);
 
             currentElementOfOuterTable = currentElementOfOuterTable->next;
             currentElementOfCurrentTable = currentElementOfCurrentTable->next;
         }
 
-        return hashTableResult;
+        return *this;
     }
 };
 
@@ -153,31 +147,26 @@ private:
 public:
     Coin()
     {
-        // nominal from 1 to 10
-        nominal = rand() % 10 + 1;
+        nominal = rand() % 10 + 1;  // nominal from 1 to 10
     }
+
     // added getter for private nominal
     int getNominal()
     {
         return nominal;
     }
-
-    // friend ostream &operator<<(ostream &output, Coin &coin)
-    // {
-    //     output << coin.getNominal();
-    //     return output;
-    // }
 };
 
 class MoneyBox
 {
 private:
-    int sumOfCoins = 0;
-
-    // TODO: можно было сделать массивом с подмассивами, типо: {{1, 4}, {2, 34}, {3, 5}} (первое значение это номинал монеты, второе это количество таких монет)
+    int sumOfCoins;
     CustomHashTable countOfCoinsByNomination;
 
 public:
+    MoneyBox() {
+        sumOfCoins = 0;
+    }
 
     void saveCoinToBox(Coin coin)
     {
@@ -195,20 +184,18 @@ public:
     friend ostream &operator<<(ostream &output, const MoneyBox &moneyBox)
     {
         output << "Sum of coins: " << moneyBox.sumOfCoins << endl;
-        // Тут почему-то мы удаляем обьект countOfCoinsByNomination(обьект класса), надо сделать к нему доступ как-то по другому
         output << moneyBox.countOfCoinsByNomination.returnStringStatistic();
         return output;
     }
 
-    MoneyBox operator+(const MoneyBox &moneyBox)
+    MoneyBox& operator+(const MoneyBox &moneyBox)
     {
-        MoneyBox moneyBoxResult;
-        moneyBoxResult.sumOfCoins = moneyBox.sumOfCoins + sumOfCoins;
-        moneyBoxResult.countOfCoinsByNomination = countOfCoinsByNomination + moneyBox.countOfCoinsByNomination;
-        return moneyBoxResult;
+        sumOfCoins = sumOfCoins + moneyBox.sumOfCoins;
+        countOfCoinsByNomination = countOfCoinsByNomination + moneyBox.countOfCoinsByNomination;
+        return *this;
     }
 
-    MoneyBox operator+(const Coin &coin)
+    MoneyBox& operator+(const Coin &coin)
     {
         this->saveCoinToBox(coin);
         return *this;
@@ -296,6 +283,5 @@ int main()
             break;
         }
     }
-
     return 0;
 }
