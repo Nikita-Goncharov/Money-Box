@@ -1,5 +1,5 @@
-## Custom queue with priorities in c++
-A queue with a variable number of priorities. Queue elements are also overloaded to perform mathematical and logical operations
+## Money box in c++
+Money box with custom hash table for saving count of coins by nominal. Money boxes can be combined with other boxes and coins.
 ***
 For start(linux)
 ```shell

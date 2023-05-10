@@ -78,23 +78,6 @@ public:
         }
     }
 
-    // void takeCoinFromTable(int nominal)
-    // {
-    //     CustomHashTableElement *currentElement = head;
-    //     while (currentElement != 0)
-    //     {
-    //         if (currentElement->nominalCoinKey == nominal)
-    //         {
-    //             if (currentElement->countOfCoinsValue > 0)
-    //             {
-    //                 currentElement->countOfCoinsValue--;
-    //                 return;
-    //             }
-    //         }
-    //         currentElement = currentElement->next;
-    //     }
-    // }
-
     string returnStringStatistic() const
     {
         string returnStatistic = "Count coins: \n";
